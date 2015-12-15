@@ -46,4 +46,10 @@ typedef enum {
  */
 - (void)requestHTMLDataSuccess:(void(^)(AFHTTPRequestOperation * operation, id response))success
                        failure:(void(^)(AFHTTPRequestOperation * operation, NSError * error)) failure;
+
+- (void)requestAuthenticatedDataWithUserName:(NSString *)userName
+                                    password:(NSString *)password
+                                     success:(void(^)(AFHTTPRequestOperation * operation, id response))success
+                                    failure :(void(^)(AFHTTPRequestOperation * operation, NSError * error)) failure;
+
 @end

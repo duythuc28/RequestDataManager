@@ -12,7 +12,7 @@ static const NSInteger HTTP_RESPONSE_CODES_SUCCESS = 200;
 @implementation RequestDataManager
 
 
-#pragma mark - Initialization 
+#pragma mark - Initialization
 
 - (id)initWithUrl:(NSString *)url {
     self = [super init];
@@ -26,7 +26,7 @@ static const NSInteger HTTP_RESPONSE_CODES_SUCCESS = 200;
 #pragma mark - Request Method
 
 - (void)requestDataSuccess:(void(^)(AFHTTPRequestOperation * operation, id response))success
-            failure:(void(^)(AFHTTPRequestOperation * operation, NSError * error)) failure {
+                   failure:(void(^)(AFHTTPRequestOperation * operation, NSError * error)) failure {
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
     [self invokeRequestOperation:manager
                    requestMethod:self.requestMethod
@@ -38,6 +38,19 @@ static const NSInteger HTTP_RESPONSE_CODES_SUCCESS = 200;
                        failure:(void(^)(AFHTTPRequestOperation * operation, NSError * error)) failure {
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
     manager.responseSerializer.acceptableContentTypes = [NSSet setWithObject:@"text/html"];
+    [self invokeRequestOperation:manager
+                   requestMethod:self.requestMethod
+                         success:success
+                         failure:failure];
+}
+
+- (void)requestAuthenticatedDataWithUserName:(NSString *)userName
+                                    password:(NSString *)password
+                                     success:(void(^)(AFHTTPRequestOperation * operation, id response))success
+                                    failure :(void(^)(AFHTTPRequestOperation * operation, NSError * error)) failure {
+    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    manager.requestSerializer = [AFHTTPRequestSerializer serializer];
+    [manager.requestSerializer setAuthorizationHeaderFieldWithUsername:userName password:password];
     [self invokeRequestOperation:manager
                    requestMethod:self.requestMethod
                          success:success
@@ -86,8 +99,8 @@ static const NSInteger HTTP_RESPONSE_CODES_SUCCESS = 200;
 
 #pragma mark - POST Method
 - (void)postData:(AFHTTPRequestOperationManager *)manager
-               success:(void(^)(AFHTTPRequestOperation * operation, id response)) success
-               failure:(void(^)(AFHTTPRequestOperation * operation, NSError * error)) failure {
+         success:(void(^)(AFHTTPRequestOperation * operation, id response)) success
+         failure:(void(^)(AFHTTPRequestOperation * operation, NSError * error)) failure {
     // Using AFNetworking to post data
     [manager POST:self.baseUrl parameters:self.parameters success:^(AFHTTPRequestOperation *operation, id responseObject) {
         // success data
@@ -104,8 +117,8 @@ static const NSInteger HTTP_RESPONSE_CODES_SUCCESS = 200;
 
 #pragma mark - PUT Method
 - (void)putData:(AFHTTPRequestOperationManager *)manager
-         success:(void(^)(AFHTTPRequestOperation * operation, id response)) success
-         failure:(void(^)(AFHTTPRequestOperation * operation, NSError * error)) failure {
+        success:(void(^)(AFHTTPRequestOperation * operation, id response)) success
+        failure:(void(^)(AFHTTPRequestOperation * operation, NSError * error)) failure {
     // Using AFNetworking to post data
     [manager PUT:self.baseUrl parameters:self.parameters success:^(AFHTTPRequestOperation *operation, id responseObject) {
         // success data
@@ -122,8 +135,8 @@ static const NSInteger HTTP_RESPONSE_CODES_SUCCESS = 200;
 
 #pragma mark - DELETE Method
 - (void)deleteData:(AFHTTPRequestOperationManager *)manager
-        success:(void(^)(AFHTTPRequestOperation * operation, id response)) success
-        failure:(void(^)(AFHTTPRequestOperation * operation, NSError * error)) failure {
+           success:(void(^)(AFHTTPRequestOperation * operation, id response)) success
+           failure:(void(^)(AFHTTPRequestOperation * operation, NSError * error)) failure {
     // Using AFNetworking to post data
     [manager DELETE:self.baseUrl parameters:self.parameters success:^(AFHTTPRequestOperation *operation, id responseObject) {
         // success data
