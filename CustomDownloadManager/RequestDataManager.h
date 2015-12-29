@@ -36,20 +36,20 @@ typedef enum {
  *  @param success response data
  *  @param failure error code
  */
-- (void)requestDataSuccess:(void(^)(AFHTTPRequestOperation * operation, id response))success
-                   failure:(void(^)(AFHTTPRequestOperation * operation, NSError * error)) failure;
+- (void)requestDataSuccess:(void(^)(NSURLSessionTask * operation, id response))success
+                   failure:(void(^)(NSURLSessionTask * operation, NSError * error)) failure;
 /**
  *  Request RESTFul Service Data, content HTML header
  *
  *  @param success response data
  *  @param failure error code
  */
-- (void)requestHTMLDataSuccess:(void(^)(AFHTTPRequestOperation * operation, id response))success
-                       failure:(void(^)(AFHTTPRequestOperation * operation, NSError * error)) failure;
+- (void)requestHTMLDataSuccess:(void(^)(NSURLSessionTask * operation, id response))success
+                       failure:(void(^)(NSURLSessionTask * operation, NSError * error)) failure;
 
 - (void)requestAuthenticatedDataWithUserName:(NSString *)userName
                                     password:(NSString *)password
-                                     success:(void(^)(AFHTTPRequestOperation * operation, id response))success
-                                    failure :(void(^)(AFHTTPRequestOperation * operation, NSError * error)) failure;
+                                     success:(void(^)(NSURLSessionTask * operation, id response))success
+                                    failure :(void(^)(NSURLSessionTask * operation, NSError * error)) failure;
 
 @end

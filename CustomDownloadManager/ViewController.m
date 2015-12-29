@@ -20,9 +20,9 @@ static NSString * const BaseURLString = @"http://www.raywenderlich.com/demos/wea
     // Do any additional setup after loading the view, typically from a nib.
     RequestDataManager * requestDataManager = [[RequestDataManager alloc]initWithUrl:BaseURLString];
     [requestDataManager setRequestMethod:GET];
-    [requestDataManager requestDataSuccess:^(AFHTTPRequestOperation *operation, id response) {
+    [requestDataManager requestDataSuccess:^(NSURLSessionTask *operation, id response) {
         NSLog(@"%@",response);
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+    } failure:^(NSURLSessionTask *operation, NSError *error) {
         
     }];
 }

@@ -9,6 +9,7 @@
 #import "RequestDataManager.h"
 
 static const NSInteger HTTP_RESPONSE_CODES_SUCCESS = 200;
+
 @implementation RequestDataManager
 
 
@@ -25,18 +26,18 @@ static const NSInteger HTTP_RESPONSE_CODES_SUCCESS = 200;
 
 #pragma mark - Request Method
 
-- (void)requestDataSuccess:(void(^)(AFHTTPRequestOperation * operation, id response))success
-                   failure:(void(^)(AFHTTPRequestOperation * operation, NSError * error)) failure {
-    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+- (void)requestDataSuccess:(void(^)(NSURLSessionTask * operation, id response))success
+                   failure:(void(^)(NSURLSessionTask * operation, NSError * error)) failure {
+    AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
     [self invokeRequestOperation:manager
                    requestMethod:self.requestMethod
                          success:success
                          failure:failure];
 }
 
-- (void)requestHTMLDataSuccess:(void(^)(AFHTTPRequestOperation * operation, id response))success
-                       failure:(void(^)(AFHTTPRequestOperation * operation, NSError * error)) failure {
-    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+- (void)requestHTMLDataSuccess:(void(^)(NSURLSessionTask * operation, id response))success
+                       failure:(void(^)(NSURLSessionTask * operation, NSError * error)) failure {
+    AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
     manager.responseSerializer.acceptableContentTypes = [NSSet setWithObject:@"text/html"];
     [self invokeRequestOperation:manager
                    requestMethod:self.requestMethod
@@ -46,9 +47,9 @@ static const NSInteger HTTP_RESPONSE_CODES_SUCCESS = 200;
 
 - (void)requestAuthenticatedDataWithUserName:(NSString *)userName
                                     password:(NSString *)password
-                                     success:(void(^)(AFHTTPRequestOperation * operation, id response))success
-                                    failure :(void(^)(AFHTTPRequestOperation * operation, NSError * error)) failure {
-    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+                                     success:(void(^)(NSURLSessionTask * operation, id response))success
+                                    failure :(void(^)(NSURLSessionTask * operation, NSError * error)) failure {
+    AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
     manager.requestSerializer = [AFHTTPRequestSerializer serializer];
     [manager.requestSerializer setAuthorizationHeaderFieldWithUsername:userName password:password];
     [self invokeRequestOperation:manager
@@ -58,10 +59,10 @@ static const NSInteger HTTP_RESPONSE_CODES_SUCCESS = 200;
 }
 
 
-- (void)invokeRequestOperation:(AFHTTPRequestOperationManager *)manager
+- (void)invokeRequestOperation:(AFHTTPSessionManager *)manager
                  requestMethod:(RequestMethod )requestMethod
-                       success:(void(^)(AFHTTPRequestOperation * operation, id response)) success
-                       failure:(void(^)(AFHTTPRequestOperation * operation, NSError * error)) failure {
+                       success:(void(^)(NSURLSessionTask * operation, id response)) success
+                       failure:(void(^)(NSURLSessionTask * operation, NSError * error)) failure {
     switch (requestMethod) {
         case GET:
             [self getData:manager success:success failure:failure];
@@ -80,72 +81,76 @@ static const NSInteger HTTP_RESPONSE_CODES_SUCCESS = 200;
     }
 }
 #pragma mark - GET Method
--(void)getData:(AFHTTPRequestOperationManager *)manager
-       success:(void(^)(AFHTTPRequestOperation * operation, id response)) success
-       failure:(void(^)(AFHTTPRequestOperation * operation, NSError * error)) failure  {
+-(void)getData:(AFHTTPSessionManager *)manager
+       success:(void(^)(NSURLSessionTask * operation, id response)) success
+       failure:(void(^)(NSURLSessionTask * operation, NSError * error)) failure  {
     // Using AFNetworking to get data
-    [manager GET:self.baseUrl parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    [manager GET:self.baseUrl parameters:nil success:^(NSURLSessionTask *operation, id responseObject) {
         // success data
-        if (operation.response.statusCode == HTTP_RESPONSE_CODES_SUCCESS) {
+        NSHTTPURLResponse* response = (NSHTTPURLResponse*)operation.response;
+        if (response.statusCode == HTTP_RESPONSE_CODES_SUCCESS) {
             success (operation , responseObject);
         } else {
             failure (operation , nil);
         }
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+    } failure:^(NSURLSessionTask *operation, NSError *error) {
         // failure
         failure (operation, error);
     }];
 }
 
 #pragma mark - POST Method
-- (void)postData:(AFHTTPRequestOperationManager *)manager
-         success:(void(^)(AFHTTPRequestOperation * operation, id response)) success
-         failure:(void(^)(AFHTTPRequestOperation * operation, NSError * error)) failure {
+- (void)postData:(AFHTTPSessionManager *)manager
+         success:(void(^)(NSURLSessionTask * operation, id response)) success
+         failure:(void(^)(NSURLSessionTask * operation, NSError * error)) failure {
     // Using AFNetworking to post data
-    [manager POST:self.baseUrl parameters:self.parameters success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    [manager POST:self.baseUrl parameters:self.parameters success:^(NSURLSessionTask *operation, id responseObject) {
         // success data
-        if (operation.response.statusCode == HTTP_RESPONSE_CODES_SUCCESS) {
+        NSHTTPURLResponse* response = (NSHTTPURLResponse*)operation.response;
+        if (response.statusCode == HTTP_RESPONSE_CODES_SUCCESS) {
             success (operation , responseObject);
         } else {
             failure (operation , nil);
         }
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+    } failure:^(NSURLSessionTask *operation, NSError *error) {
         // failure
         failure (operation, error);
     }];
 }
 
 #pragma mark - PUT Method
-- (void)putData:(AFHTTPRequestOperationManager *)manager
-        success:(void(^)(AFHTTPRequestOperation * operation, id response)) success
-        failure:(void(^)(AFHTTPRequestOperation * operation, NSError * error)) failure {
+- (void)putData:(AFHTTPSessionManager *)manager
+        success:(void(^)(NSURLSessionTask * operation, id response)) success
+        failure:(void(^)(NSURLSessionTask * operation, NSError * error)) failure {
     // Using AFNetworking to post data
-    [manager PUT:self.baseUrl parameters:self.parameters success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    [manager PUT:self.baseUrl parameters:self.parameters success:^(NSURLSessionTask *operation, id responseObject) {
         // success data
-        if (operation.response.statusCode == HTTP_RESPONSE_CODES_SUCCESS) {
+        NSHTTPURLResponse* response = (NSHTTPURLResponse*)operation.response;
+        if (response.statusCode == HTTP_RESPONSE_CODES_SUCCESS) {
             success (operation , responseObject);
         } else {
             failure (operation , nil);
         }
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+    } failure:^(NSURLSessionTask *operation, NSError *error) {
         // failure
         failure (operation, error);
     }];
 }
 
 #pragma mark - DELETE Method
-- (void)deleteData:(AFHTTPRequestOperationManager *)manager
-           success:(void(^)(AFHTTPRequestOperation * operation, id response)) success
-           failure:(void(^)(AFHTTPRequestOperation * operation, NSError * error)) failure {
+- (void)deleteData:(AFHTTPSessionManager *)manager
+           success:(void(^)(NSURLSessionTask * operation, id response)) success
+           failure:(void(^)(NSURLSessionTask * operation, NSError * error)) failure {
     // Using AFNetworking to post data
-    [manager DELETE:self.baseUrl parameters:self.parameters success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    [manager DELETE:self.baseUrl parameters:self.parameters success:^(NSURLSessionTask *operation, id responseObject) {
         // success data
-        if (operation.response.statusCode == HTTP_RESPONSE_CODES_SUCCESS) {
+        NSHTTPURLResponse* response = (NSHTTPURLResponse*)operation.response;
+        if (response.statusCode == HTTP_RESPONSE_CODES_SUCCESS) {
             success (operation , responseObject);
         } else {
             failure (operation , nil);
         }
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+    } failure:^(NSURLSessionTask *operation, NSError *error) {
         // failure
         failure (operation, error);
     }];
