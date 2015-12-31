@@ -32,6 +32,11 @@ static const NSInteger HTTP_RESPONSE_CODES_SUCCESS = 200;
     [self invokeRequestOperation:manager
                    requestMethod:self.requestMethod
                          success:success
+     
+     
+     
+     
+     
                          failure:failure];
 }
 
@@ -153,6 +158,42 @@ static const NSInteger HTTP_RESPONSE_CODES_SUCCESS = 200;
     } failure:^(NSURLSessionTask *operation, NSError *error) {
         // failure
         failure (operation, error);
+    }];
+}
+#pragma mark - DOWNLOAD file
+- (void)downloadFileDataBlock:(void(^)(NSURLSession * session,
+                                       NSURLSessionDownloadTask *downloadTask,
+                                       int64_t bytesWritten,
+                                       int64_t totalBytesWritten,
+                                       int64_t totalBytesExpectedToWrite))block
+            completionHandler:(void (^)(NSURLResponse *response,
+                                        NSURL *filePath,
+                                        NSError *error))completionHandler {
+    
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:self.baseUrl]];
+    AFHTTPSessionManager *session = [AFHTTPSessionManager manager];
+    NSURLSessionDownloadTask *downloadTask = [session downloadTaskWithRequest:request
+                                                                     progress:nil
+                                                                  destination:^NSURL *(NSURL *targetPath, NSURLResponse *response) {
+                                                                      
+                                                                      NSURL * documentsDirectoryURL = [[NSFileManager defaultManager] URLForDirectory:NSDocumentDirectory
+                                                                                                                                             inDomain:NSUserDomainMask
+                                                                                                                                    appropriateForURL:nil
+                                                                                                                                               create:NO
+                                                                                                                                                error:nil];
+                                                                      return [documentsDirectoryURL URLByAppendingPathComponent:[response suggestedFilename]];
+                                                                  } completionHandler:^(NSURLResponse *response,
+                                                                                        NSURL *filePath,
+                                                                                        NSError *error) {
+                                                                      completionHandler(response, filePath, error);
+                                                                  }];
+    [downloadTask resume];
+    
+    [session setDownloadTaskDidWriteDataBlock:^(NSURLSession *session,
+                                                NSURLSessionDownloadTask *downloadTask,
+                                                int64_t bytesWritten, int64_t totalBytesWritten,
+                                                int64_t totalBytesExpectedToWrite) {
+        block (session, downloadTask, bytesWritten , totalBytesWritten , totalBytesExpectedToWrite);
     }];
 }
 @end
