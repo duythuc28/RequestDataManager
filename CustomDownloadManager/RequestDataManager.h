@@ -12,7 +12,9 @@ typedef enum {
     GET,
     POST,
     PUT,
-    DELETE
+    DELETE,
+    DOWNLOAD,
+    UPLOAD
 } RequestMethod ;
 
 @interface RequestDataManager : NSObject
@@ -51,5 +53,14 @@ typedef enum {
                                     password:(NSString *)password
                                      success:(void(^)(NSURLSessionTask * operation, id response))success
                                     failure :(void(^)(NSURLSessionTask * operation, NSError * error)) failure;
+- (void)requestDataTaskProgress:(void (^) (NSProgress * progress)) progress
+              completionHandler:(void (^)(NSURLResponse *response,
+                                          NSURL *filePath,
+                                          NSError *error))completionHandler;
+
+- (void)setUploadMultiPartRequestFile:(NSString *)fileName
+                             filePath:(NSString *)filePath
+                                 name:(NSString *)name
+                             mimeType:(NSString *)mineType;
 
 @end
